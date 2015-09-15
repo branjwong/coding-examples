@@ -1,2 +1,3 @@
 # coding-examples
-A glimpse into Brandon's technological ability.
+
+This is Brandon Wong's stash of coding experience.

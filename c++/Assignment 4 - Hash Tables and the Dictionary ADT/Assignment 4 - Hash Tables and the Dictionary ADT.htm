@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0072)http://www.cs.sfu.ca/~mori/courses/cmpt225/assignments/assignment-4.html -->
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<link rel="stylesheet" href="http://www.cs.sfu.ca/~mori/mori_pages.css">
+<link rel="stylesheet" href="http://www.cs.sfu.ca/~mori/courses/cmpt225/cmpt225_style.css">
+
+
+
+
+  
+    
+
+    <title>
+        Assignment 4 - Hash Tables and the Dictionary ADT
+    </title>
+
+    
+    
+    
+            
+            
+<style type="text/css"></style></head><body><h1>CMPT 225 Assignment 4: Hash Tables and the Dictionary ADT</h1>
+
+<hr>    
+        
+
+
+<div class="plain">
+
+
+
+<p>In this assignment you are to implement a Dictionary ADT (also
+  known as Map, or Associative Array) using a hash table data
+  structure.  You will use this to analyze a collection of text
+  documents efficiently.
+
+</p><p>Suppose your job is to organize the world's information.  Let us
+  start with a small collection of fine works of English literature
+  (provided data are public domain in Canada).
+
+</p><p>Let's try to provide two pieces of functionality to users of these
+  data.
+  </p><ol>
+    <li>Build a histogram of word frequencies in a document.  Provide a list
+  of all unique words in a document with the number of times each occurs. E.g. how many times did the word "comrades" appear in Animal Farm?
+    </li><li>Find all documents that contain a particular word.  E.g. find
+  all documents in which "thoughtcrime" occurs.
+  </li></ol>
+
+<p>Start by downloading the <a href="http://www.cs.sfu.ca/~mori/courses/cmpt225/assignments/a4-files.zip">assignment files</a>.  This
+zipfile contains two directories, one for each part, with makefiles,
+  answers.txt, a test script and ground truths, a few books,
+and stubs for all of the .h and .cpp files you need.
+  </p><ul>
+    <li><b>Please do not create any additional .h or .cpp files.</b>
+    </li><li><b>You can add to the .h files, but do not modify any of the
+    provided method prototypes. (Except for part 2.)</b>
+    </li><li><b>You can modify hashtable_test.cpp for testing, but your code
+    must work with the original.</b>
+  </li></ul>
+
+  
+<hr>
+  
+<h2>Naive Algorithms</h2>
+  
+    <p>Start by considering naive algorithms and data structures for
+    performing these queries.
+  </p><ol>
+    <li>Histograms of word frequencies.
+    <pre>read all w words into an array "words"
+for i = 1 to w
+  count = 0
+  for j = 1 to w
+    if words[i] == words[j]
+      if j &lt; i
+        break
+      end
+      count++
+    end
+  end
+  print words[i] + ": " + count
+end
+</pre>
+    Answer the questions about this code in answers.txt (Naive 1).
+
+    </li><li>Finding documents.
+    <pre>for i = 1 to d
+  read all w words from document i into array "words"
+  for j = 1 to w
+    if words[j] == keyword
+      print "Document " + i + " contains " + keyword
+      break
+    end
+  end
+end
+</pre>
+    Answer the questions about this code in answers.txt (Naive 2).
+  </li></ol>
+
+  <hr>
+
+  <h2>Faster Algorithms</h2>
+
+These naive algorithms are very slow for reasonably large numbers of
+  words, documents, and/or users (see answers.txt).  You will now
+  develop better versions, using a hash table to implement the Dictionary ADT.
+
+<p>Recall the specification of the Dictionary ADT.  It allows the
+  following operations:
+  </p><ul>
+    <li>Insertion of (key, value) pair
+    </li><li>Removal of (key, value) pair
+    </li><li>Lookup of value for key
+    </li><li>Modification of value for existing (key, value) pair
+  </li></ul>
+  <p>We will implement the Dictionary ADT using a hash table data
+  structure.  All of the operations should be performed in O(1)
+  average case (O(n) worst case) time.  Conveniently, the hash table
+  has the same operations, so we will not actually have a Dictionary
+  class.  But note that the Dictionary ADT can be implemented using
+  data structures other than hash tables.
+
+
+  </p><hr>
+
+  <h3>Part 0: Implementing the hash table</h3>
+
+  
+  <p>For this part, please look at <i>HashTable.h</i> and
+  <i>HashTable.cpp</i>.  Much of this class has been written for you.
+  Please examine it, and understand how the hash table is implemented.
+
+  </p><p>Your task is to write:
+  </p><ul>
+    <li>remove
+    </li><li>lookup
+    </li><li>modify
+  </li></ul>
+
+  <p>Don't modify the hash function yet.
+
+  </p><p>Verify that you have implemented the hash function correctly.
+  You can run the test script <i>test.py</i> to test your code.
+
+  </p><p>This test script is more intelligent than previous ones -- if you
+  add cout statements in your code for debugging, it will ignore
+  these.
+
+  </p><p>There is also a debugging program ht_debug.cpp (builds into
+  ht_debug with the makefile).  You can use this to test out parts of
+  your code too.
+
+  </p><hr>
+
+  <h3>Part 1: Word frequencies</h3>
+
+  <p>The provided code <i>word_frequencies.cpp</i> is complete. This
+  uses your hash table to compute word frequencies according to the
+  following algorithm.
+
+  </p><pre>for each word (w words)
+  // Each word
+  lookup word in hash table
+  if it is present, increment its value by 1
+  else insert it into the hash table
+end
+
+keys = array of all keys (words) in the hash table
+for each key
+  lookup count in hashtable
+  print key + ": " + count
+end
+</pre>
+
+  <ul>
+    <li>What is the average case time complexity of this pseudocode,
+  using the provided hash function?  If we used a "good" hash
+    function, what do you think the average case time complexity would
+    be?  Write your answer in answers.txt.
+    </li><li>Try running the code to see how fast it is.
+    <pre>./word_frequencies data/1400.txt
+./word_frequencies data/pg2600.txt
+</pre>
+    (Ctrl-C terminates a running program.)
+
+    </li><li>Modify the hash function in HashTable.cpp to improve the
+  performance.  Try running word_frequencies on War and Peace
+  (pg2600.txt) again.  You shouldn't feel like using Ctrl-C.
+
+    <p>A good hash function to use would be the following:
+    </p><pre>ch<sub>0</sub> * 32<sup>n-1</sup> + ch<sub>1</sub> * 32<sup>n-2</sup> + ... + ch<sub>n-2</sub> * 32<sup>1</sup> + ch<sub>n-1</sub> * 32<sup>0</sup></pre>
+    <p>where
+    <i>ch<sub>0</sub></i> is the left most character of the string,
+    characters are represented as numbers in 1-26 (case insensitive),
+    and <i>n</i> is the size of the string.&nbsp; For example the
+    string "cat" has the value:</p>
+
+<pre>3 * 32<sup>2</sup> + 1 * 32 + 20 = 3124
+</pre><p>Note
+that using this calculation on large strings will result in numbers
+that will cause overflow.&nbsp; You should therefore use Horner's rule
+to perform the calculation, and apply the <i>mod </i>operator after
+    computing each expression in Horner's rule.&nbsp; Horner's rule
+    will be briefly discussed in class.</p>
+
+
+  </li></ul>
+
+  
+
+
+  <hr>
+
+  <h3>Part 2: Indexing documents (bonus marks)</h3>
+
+  <p>The provided code index_directory.cpp is complete.  It uses a hash
+  table to allow indexing documents, finding all documents that
+  contain a certain substring.
+
+  </p><pre>// Preprocessing to build the index
+for each document
+  for each word in the document
+    add document to the list of documents for this word
+  end
+end
+
+// Answer queries
+while true
+  ask user for query word
+  find all documents containing word
+end</pre>
+
+  <p>InvertedIndex is similar to the first HashTable.  However, instead
+  of storing integer counts, it should store lists of document names.
+  This is done in the methods InvertedIndex::add and InvertedIndex::lookup.
+  You can modify how these are implemented if you wish, e.g. with a linked
+  list, a vector, a set, etc.  You might need to modify
+  index_directory.cpp based on your decisions.
+  
+  </p><p>This data structure is called an inverted index, and is a standard, very
+  useful data structure for document retrieval.  Modern search engines
+  essentially use this (with many details).
+
+  </p><p>You can use the program document_index to
+  find documents in a specified directory.  document_index takes a
+  directory as a parameter, and builds an inverted index for all files
+  in all subdirectories.  It can further limit the index to specified
+  file types (e.g. just .h and .cpp).  After building the index, the
+  user can query for different words.
+  </p><pre>&gt; ./index_directory .
+Found a file: ./ii_debug
+Found a file: ./ii_debug.cpp
+Found a file: ./index_directory
+Found a file: ./index_directory.cpp
+Found a file: ./InvertedIndex.cpp
+Found a file: ./InvertedIndex.h
+Found a file: ./InvertedIndex.o
+Found a file: ./Makefile
+Indexed .
+  found 0 subdirectories and 8 files
+  built index with 789 keys
+Enter a word to search for, q to terminate
+break
+Searched for break
+ found 1 occurrences: 
+{./index_directory.cpp, }
+Enter a word to search for, q to terminate
+for
+Searched for for
+ found 4 occurrences: 
+{./InvertedIndex.cpp, ./InvertedIndex.h, ./index_directory, ./index_directory.cpp, }
+Enter a word to search for, q to terminate
+q</pre>
+
+
+  <p>The next part is open-ended.  Feel free to be creative, and make
+    improvements to this application and InvertedIndex class.  Here
+    are some suggestions:
+
+  </p><ul>
+    <li>Create a templated version that allows one to map anything to
+  anything, and use it to map strings to vectors for example, and use
+    this in the application.
+    </li><li>Modify InvertedIndex to use separate chaining.
+    </li><li>Modify InvertedIndex to use a different probing strategy (double
+    hashing, quadratic).
+    </li><li>Make the hash table dynamically growable -- insert
+  should double the table size if the hash table is getting too full.
+  This application might make a <b>big</b> table, but its size is
+  difficult to predict a priori.
+    </li><li>Change the inverted index to return a sorted list of
+    documents, sorted by a score, for instance the number of
+    occurrences of the word in the document.
+    </li><li>Modify the application and inverted index to allow saving a
+    built index to disk, and reading it back.
+    </li><li>Modify the application and inverted index to support matching
+    non-alphabetic characters, e.g. search for "break;".
+    </li><li>Modify the application and inverted index to support partial
+    matching of strings, e.g. "brea" matches "break;".
+</li></ul>
+  
+
+
+<hr>
+
+<h2>Assessment and Submission</h2>
+
+<h3>Submission</h3>
+
+<p>You should submit your assignment online to the <a href="http://courses.cs.sfu.ca/">CourSys submission server</a>. You should submit the following:</p>
+
+Part 1:
+<ul>
+  <li>Modified <i>HashTable.h</i>
+  </li><li>Modified <i>HashTable.cpp</i>
+</li></ul>
+
+Part 2:
+<ul>
+  <li>A single file part2.zip with only your directory <i>part2</i>.  This
+zip file should contain everything needed to build your code --
+running the following should build your code:
+<pre>unzip part2.zip
+cd part2
+make</pre>
+  </li><li>A PDF file report.pdf with a description of what you did.  Please include a
+  description of the modifications you chose to make, any interesting
+  design decisions you made, and example output of running your application.
+</li></ul>
+
+
+<p>Please read the documentation on the submission site for further
+information.  The assignment is due at 11:59pm on April 10.
+
+
+</p><h3>Assessment</h3>
+
+The submitted files must build with the provided makefile
+in order to receive marks.
+
+Part 1 is worth 3% and marks are allocated to the assignment as follows:
+
+<ul>
+<li>Correctness 1.5% (provided and held-out test cases, efficient O(1)
+  average case hash table)
+</li>
+<li>Answers to questions 0.75%
+</li><li>Memory management 0.25% (valgrind --error-exitcode=1 -q
+--leak-check=full ./word_frequencies data/pg2600.txt)
+</li>
+<li>Coding style 0.5%  (use of functions and loops, code indentation
+and spacing, comments and variable naming)
+</li>
+</ul>
+
+Part 2 is open-ended, and bonus marks will be awarded based on the
+creativity, scope, correctness, and description of the application.
+
+<hr>
+  <a href="http://www.cs.sfu.ca/~mori/courses/cmpt225">Back to the CMPT 225 homepage.</a>
+
+
+
+</div></body></html>

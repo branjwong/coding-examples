@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0079)http://www.cs.sfu.ca/~mori/courses/cmpt225/assignments/assignment-1-queues.html -->
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<link rel="stylesheet" href="http://www.cs.sfu.ca/~mori/mori_pages.css">
+<link rel="stylesheet" href="http://www.cs.sfu.ca/~mori/courses/cmpt225/assignments/lab_style.css">
+
+
+
+
+  
+    
+
+    <title>
+        Assignment 1 - Waiting In Line
+    </title>
+
+    
+    
+    
+            
+            
+<style type="text/css"></style></head><body><h1>CMPT 225 Assignment 1: Waiting In Line</h1>
+
+<hr>    
+        
+    
+<p>Your are to write a bank ATM simulation program<b> in C++</b>.&nbsp;
+The simulation's purpose is to determine the average waiting time for
+customers using the ATMs.&nbsp; This assignment is worth 3% of your
+final grade.
+
+</p><p>Start by downloading the <a href="http://www.cs.sfu.ca/~mori/courses/cmpt225/assignments/a1-files.zip">assignment files</a>.  This
+zipfile contains a makefile, a test script and inputs/ground truths,
+and stubs for all of the .h and .cpp files you need.  <b>Please do not
+create any additional .h and .cpp files.</b>
+
+<br></p>
+<hr>
+
+
+<h2>Problem Description
+
+<br></h2>
+
+<p>There are three inputs to the program:</p>
+<ul><li>M - length of simulation in minutes, simulation runs from
+  minute 0 to M-1</li>
+<li>N - the number of ATMs in the bank.</li>
+<li>A list of customer arrival and transaction times, sorted by
+arrival time.  The list starts with the number of customers.
+
+<p>For example, if the input is:
+</p><pre>10
+4
+5
+0 2
+0 1
+1 4
+2 2
+2 7
+</pre>
+Then we are simulating 4 ATMs over a 10 minute period.
+5 customers arrive, at time 0 (transaction time 2), at time 0
+(transaction time 1), ...
+
+<p>A customer who arrives in minute n chooses an ATM in minute n, and
+could conduct business on minute n+1.  E.g. the customer who arrives
+in minute 0 with 2 minutes of transaction time would choose an (empty)
+ATM on minute 0, and work on minutes 1 and 2.
+
+</p><p>Customers must be processed in the order
+specified in this list (e.g. the transaction time 2 customer at time 0
+should be processed before the transaction time 1 customer).
+
+</p><p>For your convenience, code is provided to read input in this format, as well as
+produce output in the required format. </p></li></ul>
+
+<h3><span style="color: rgb(0, 0, 0);">Note</span></h3>
+
+<p><span style="color: rgb(0, 0, 0);">You should <b>not </b>use M and N as variable names in your program, uses some other, more descriptive name starting with a lower case letter.</span>
+
+<br></p>
+
+<h3>Transaction Time</h3>
+
+<p>Different customers may spend different amounts of time at the ATM,
+one customer may just want to make a quick withdrawal, while another
+(always the one you get stuck behind when you are in a hurry) may want
+to do his / her entire banking for the last three months.
+
+<br></p>
+
+<h3>Choosing an ATM</h3>
+
+<p>Whenever a customer arrives he/she should be assigned to an ATM queue. We will assume the customers are rational,
+want to wait for as little time as possible, but don't know how long
+other customers are going to take.&nbsp; Therefore if an ATM is free
+(i.e. there is no one using it) a customer will go to that ATM (or one
+of the other available ATMs if there is more than one), otherwise the
+customer will go to the ATM with the smallest lineup (queue).
+
+</p><p>If there is a tie, the customer always chooses the lowest numbered
+ATM.  E.g. if there are 3 ATMs, numbered 0-2, and ATM 0 has 2
+customers waiting, and ATMs 1 and 2 have no customers waiting, ATM 1
+will be chosen.
+
+</p><p>Customers do not switch queues once they have chosen one, even if
+another ATM becomes available.
+
+<br></p>
+
+<p>Treat each minute as a discrete event (i.e. minutes should not be further divided into seconds).</p>
+
+<h3>When To Stop</h3>
+
+<p>When the simulation reaches <b>M</b>
+minutes no more new customers should be accepted.&nbsp; However, the simulation should continue until all the
+customers who were at an ATM or waiting in an ATM queue at <b>M</b> minutes have completed their transactions.</p>
+
+<h3>Output</h3>
+
+<p>For each simulation you should output the total number of
+customers and the average wait time.  Please use the provided code for
+the output.
+
+</p><p>The simulation program atm_sim should return the total wait time
+for all customers over the simulation.  This is done in the main function
+provided (in atm_sim.cpp).
+
+
+<br></p>
+
+<hr>
+
+<h2>Top level Simulation Loop</h2>
+
+<p>The simulation control loop (which would be in, or called from, the main function) can be written as a while loop like this:</p>
+
+<pre>while (min &lt; M <b>or </b>there are still customers to process)
+	// Process new customers
+	if (min &lt; M <b>and </b>new customers arrive - based on list)
+		for each new customer
+			assign customer to shortest queue
+			increment customer count
+	
+	// Process ATMs
+	for (i = 0 to N)
+		process each ATM (see below for more details) and increment wait time
+	increment min
+output statistics
+</pre>
+
+<p>Note that the above is not written in a programming language, it is
+just a pseudocode description of what I expect your main loop to be
+doing.
+
+<br></p>
+
+<h2>Simulation Components</h2>
+
+<p>Here are some thoughts about what data you will need to keep track and where:</p>
+
+<h3>Top Level (the main program file atm_sim.cpp)</h3>
+
+<p>The top level program needs to contain the main simulation loop
+(described above).&nbsp; It also needs variables for <b>M</b> and <b>N</b> (not called <b>M</b> and <b>N</b>).&nbsp; In addition you will need to record the following:</p><ul><li>A total count of the number of customers that have arrived
+
+<br></li><li>The total wait time to date for all customers (which can be retrieved from the ATMs at the end of the main loop)
+
+<br></li><li>An array of ATMs</li></ul>
+
+<p>Note that you may want to use functions in the main program to break the program into easily manageable pieces</p>
+
+<h3>ATM Class (ATM.h, ATM.cpp)
+
+<br></h3>
+
+<p>Each ATM needs to keep track of data related to it, that is:</p><ul><li>Remaining transaction time for the current customer</li><li>Availability
+(a boolean value, or a method that returns a boolean value based on the
+remaining transaction time, i.e. true if it is zero)</li><li>Time spent by customers waiting at the ATM, updated as each customer starts to use the ATM (leaves its queue)
+
+<br></li><li>A <i>queue </i>of Customer objects - let's call it an <b>ATMQueue</b></li></ul>
+
+<p>You may also want to record some other attributes in the ATM class</p>
+
+<p>You
+should create an ATM class with the member variables noted above, and
+appropriate methods to set and retrieve values for those
+variables.&nbsp; The class methods will probably include the following:</p><ul><li>Constructor</li><li>Destructor</li><li>Insert
+customer (if the ATM is not in use the customer's transaction time
+should be assigned to the ATM's transaction time, otherwise the
+customer should be inserted in the ATM's queue).&nbsp; The method
+should have a Customer object parameter.
+
+<br></li><li>Process customer
+(which will call the ATMQueue's remove method, and also set the ATM's
+remaining transaction time), this method updates the ATM's variables
+for the passage of time and is further described below.&nbsp; It should
+take a single <b>int </b>parameter that represents the current minute.
+
+<br></li><li>Return the length of the ATM's queue</li><li style="color: rgb(0, 0, 0);">Return the remaining transaction time for the current customer</li></ul>
+
+<h4>Processing a Customer in an ATM</h4>
+
+<p>The following needs to be performed to process an ATM's customers
+
+<br></p>
+
+<pre>if (ATM is in use)
+    decrement transaction time of its current customer by 1
+
+if (current customer is finished)
+    remove the customer at the front of the queue
+    set the ATM's remaining transaction time to that customer's transaction time
+    increase the ATM's total wait time by the time that the customer waited (current time - arrival time)
+</pre>
+
+<h3>Customer Queue (ATMQueue.h, ATMQueue.cpp)
+
+<br></h3>
+
+<p>You should create a customer queue class to record data required for waiting customers.&nbsp; This data consists of:</p><ul><li>A Customer object which has attributes for
+
+<br></li></ul><ul><ul><li>Customer transaction time (determined when the customer arrives)</li></ul><ul><li>The
+time (in minutes since the start of the simulation) that the customer
+arrives - this is necessary to determine how long the customer has been
+waiting when he/she leaves the queue</li></ul></ul><ul><li>The queue should keep track of the number of people in the queue (so that you can determine the shortest queue)
+
+<br></li></ul>
+
+<p><b>Your queue must be implemented using a linked list</b>, and the insert and remove methods must run in <b>constant </b>(O(1)) time.</p>
+
+<h3>Other Classes</h3>
+
+<ul><li><b>Node (Node.h, Node.cpp)</b> class with Customer and Node* attributes (and constructors).
+
+<br></li><li><b>Customer (Customer.h, Customer.cpp)</b> class with transaction time and arrival time attributes (and constructors and getters).
+
+<br></li></ul>
+<hr>
+
+
+
+<h2>Testing</h2>
+
+<p>The zipfile contains a testing script, test.py.  You should run
+this, and other test cases, to verify correctness of your simulation.
+
+</p><p>As you are developing and testing your application you may find it
+useful to print some data about the current contents of the ATMs, for
+example:
+
+<br></p><ul><li>The number of people in the ATM queue (including the person actually using the ATM)</li><li>The number of minutes remaining for the person using the ATM</li></ul>
+
+
+
+<h2>Grading</h2>
+
+The assignment is worth 3% and marks are allocated to the assignment as follows:
+
+<ul>
+<li>Correctness 2% (provided and held-out test cases, .in/.gt files)
+</li>
+<li>Memory management 0.25% (use of delete)
+</li>
+<li>Coding style 0.75%  (use of functions and loops, code indentation
+and spacing, comments, and variable naming)
+</li>
+</ul>
+
+
+
+<h2>Submission</h2>
+
+<p>You should submit your assignment online to the <span class="link-https"><a href="http://courses.cs.sfu.ca/">CourSys submission server</a></span>.&nbsp; You should submit the following:</p>
+
+<ul><li>Your modified main program (atm_sim.cpp) file, and the .h and
+  .cpp files for the four classes (Node, ATM, ATMQueue and Customer)</li>
+
+</ul>
+
+<p>Please read
+the documentation on the submission site for further information.
+The assignment is due at 11:59pm on Friday February 8.
+                 
+    
+</p><p>
+  </p><hr>
+  <a href="http://www.cs.sfu.ca/~mori/courses/cmpt225">Back to the CMPT 225 homepage.</a>
+
+
+
+</body></html>

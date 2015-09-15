@@ -1,0 +1,15 @@
+The average length of a word is: 9.58507
+
+
+The average number of character comparisons performed by this function is: 1.85833
+
+
+The O notation average case running time of the algorithm is:
+
+
+The O notation best case running time of the algorithm is: O(1)
+An example is: a
+
+
+The O notation worst case running time of the algorithm is: O(n)
+An example is: abcdefg

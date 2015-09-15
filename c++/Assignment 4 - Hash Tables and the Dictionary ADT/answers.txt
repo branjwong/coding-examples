@@ -1,0 +1,89 @@
+Naive 1.
+
+  a) What is the purpose of the "break" and if statement "if j < i"?  i.e. if you remove "if j < i" and "break" (and the corresponding "end"), what would be different about the output?
+
+Let I and J be the set of integers that i and j run though, that is I,J = {1, 2, ..., w}. Without the break statement, the nested for loop runs through all possible comparisons between all possible arrangements of choosing one element from I and one from J. But, we also know that words[i] == words[j] and words[j] == words[i] are equivalent comparisons. 
+
+The break statement removes the redundancy of measuring the frequency of a word more than once. If words[i] == words[j] and j < i, then we've already measured the frequency of that word before, and we don't need to waste time doing it again.
+
+
+
+  b) What is the time complexity of the naive word frequency computation algorithm.  Use variable w, the number of words in a document.
+
+The comparison of words[i] == words[j] is the barometer instruction.
+Here we have a for loop with parameter w encompassing a for loop with parameter w. The inner for loop is broken if the comparison of two words shows that they are the same AND that that comparison has already before, with the words in reverse order (i.e. words[j] == words[i] instead of words[i] == words[j]).
+
+Worst Case: If all of the words in the document are different, then the second for loop will never be broken early since words[i] == words[j] will never evaluate to true. Since the second for loop is never broken, and both for loops run from 1 to w, so the time complexity is O(w^2).
+
+Best Case: If all the words in the document are the same, then the barometer instruction is run w times for i = 1, then one more time for each i ≠ 1, i ∈ I, for a total of w + w - 1 times. Thus, the time complexity for this case is O(w).
+
+Average Case: It really depends on what type of data you're throwing into the algorithm. However, more often than not, I'd assume you'd want to use this algorithm on a piece of written work. Sentences don't usually have recurring words in them, and as a result, the time complexity for running this one a written work would be closer to O(w^2).
+
+
+
+Naive 2.
+
+  a) What is the time complexity of the naive document finding algorithm?  Use variables d, the number of documents, and w, the maximum number of words in each document.
+
+The comparison words[j] == keyword is the barometer instruction.
+Here we have a for loop with parameter d encompassing a for loop with parameter w. The inner for loop is broken once the keyword is found in a given document.
+
+Worst Case: If the keyword isn't in any of the documents, then the inner for loop will never be broken. Thus, the barometer instruction will be run once for every i ∈ [1, d] AND once for every j ∈[1, w]. The time complexity of this case is O(dw).
+
+Best Case: If the keyword is the first word in every document, then the inner for loop will always be broken after its the first iteration. Thus, the barometer instruction will only be run once for every i ∈ [1, d]. The time complexity of this case is O(d).
+
+Average Case: As in both the best and the worst case, the average case is also determined by the keyword used. If the keyword is a preposition, conjunction, or a definite/indefinate article, then the time complexity is going to be closer to O(d). If you are unsure that your keyword will be in your documents, then the time complexity is going to closer to O(dw).
+
+  b) Suppose we are building a large search engine, and many users want to run queries to find documents containing words.  If we have u users who each want to run a query for a different keyword, what is the time complexity of *all* of their searches? 
+
+Total Time = Time Per Search * Number of Searches.
+We've already determined the time complexity per search, but to find the total time, you just multiply by the number of searches.
+Worst Case: O(duw)
+Best Case: O(du)
+Average Case: O(du) or O(duw)
+
+Part 1.
+
+  a) What is the average case time complexity of the pseudocode for word_frequencies, using the provided, naive hash function?  Define any variables you need to use, and explain your answer.
+  
+If the naive hash function provided is used, the lookup and insert functions have an Average Case time complexity of O(k), where k is the number of different keys already in the hash table. Since all the keys map to index 0 under this hash function, the time it takes to look up or insert a word is proportional to the amount of keys already in the hash table.
+
+The word frequencies algorithm has a for loop in terms of w, the number of words in the input text file, and another for loop in terms of k, the number of keys in the hash table.
+
+for each word (w words) --> O(w)
+  // Each word
+  lookup word in hash table --> O(k)
+  if it is present, increment its value by 1 --> O(1)
+  else insert it into the hash table --> O(k)
+end
+
+keys = array of all keys (words) in the hash table 
+for each key --> O(k)
+  lookup count in hashtable --> O(k)
+  print key + ": " + count --> O(1)
+end
+
+So, by this, the time complexity for the frequencies algorithm is O(wk + k^2).
+
+  b)  If we used a "good" hash function, what do you think the average case time complexity would be?
+
+If a "good" hash function is used, then we expect keys to map to different places, more often then not. Since the insert and lookup function's time complexities are dependant on the hash function, their Average Case time complexities should be O(1). This is assuming that we use an appropriate sized hash table though for the amount of different keys we're expecting to use.
+
+for each word (w words) --> O(w)
+  // Each word
+  lookup word in hash table --> O(1)
+  if it is present, increment its value by 1 --> O(1)
+  else insert it into the hash table --> O(1)
+end
+
+keys = array of all keys (words) in the hash table 
+for each key --> O(k)
+  lookup count in hashtable --> O(1)
+  print key + ": " + count --> O(1)
+end
+
+So, by this, the time complexity for the frequencies algorithm is O(w + k).
+
+
+
+ 
