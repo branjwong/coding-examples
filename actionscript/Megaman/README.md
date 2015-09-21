@@ -7,6 +7,11 @@ Completed by: Brandon J Wong
 Language: ActionScript  
 Software Platform: Adobe Flash  
 
+## How to Install
+
+- Download the raw .fla amd .html files to the same directory on your computer's hard drive.
+- Run the .html file a browser of your choice.
+
 ## How To Play
 
 - Goal: Reduce Metalman's HP to 0  
