@@ -1,0 +1,36 @@
+
+
+// you can write to stdout for debugging purposes, e.g.
+// printf("this is a debug message\n");
+
+#define TRUE 1
+#define FALSE 0
+
+int solution(int A[], int n) {
+    if (n == 0)
+        return -1;
+    long long lsum = 0;
+    long long rsum = 0;
+    int k;
+    // printf("initial sum = %ll\n", rsum);
+    for (k = 1; k < n; k++) {
+        rsum += (long long) A[k];
+        // printf("initial sum = %ll\n", rsum);
+    }
+    // printf("initial right sum = %lld\n", rsum);
+    
+    if (lsum == rsum)
+        return k;
+    
+    for (k = 1; k < n; k++)
+    {
+        lsum += (long long) A[k-1];
+        rsum -= (long long) A[k];
+        // printf("index[%d], left sum = %lld\n", k, lsum);
+        // printf("index[%d], right sum = %lld\n", k, rsum);
+        if (lsum == rsum)
+            return k;
+    }
+    return -1;
+}
+

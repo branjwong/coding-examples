@@ -1,0 +1,51 @@
+// you can write to stdout for debugging purposes, e.g.
+// printf("this is a debug message\n");
+
+#define TRUE 1
+#define FALSE 0
+
+int solution(int A[], int N) {
+    // write your code in C99
+
+    // int equil[N];       // keeps track of which indicies are equilibrium indicies
+    
+    // // initialize equil
+    // for (int i = 0; i < N; i++)
+    //     equil[i] = FALSE;
+    
+    // equil[0] = TRUE;
+    // equil[N-1] = TRUE;
+    
+    int i, j, left, right;
+    
+    // for indicies 0 -> n-1, test to see if it is an equilibrium index
+    for (i = 0; i < N; i++)
+    {
+        left = 0;       // sum of the left side of the index
+        right = 0;      // sum of the right side of the index
+        
+        // printf("index = %d\n", i);
+        // printf("left initialized to %d\n", left);
+        // printf("right initialized to %d\n", right);
+        
+        // add up all values to the left of the index
+        for (j = 0; j < i; j++) {
+            left += A[j];
+        }
+            
+        // printf("left added to %d\n", left);
+        
+        // add up all values to the right of the index
+        for (j = i + 1; j < N; j++) {
+            right += A[j];
+        }
+            
+        // printf("right added to %d\n", right);
+        
+        // compare: if left = right then index is an equilibrium index
+        if (left == right) { 
+            return i;
+        }
+    }
+    return -1;
+}
