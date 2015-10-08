@@ -3,6 +3,7 @@
 #include <semaphore.h>
 
 #define MAX 10000000000			/* Numbers to produce */
+#define MAX_BUFFER_SIZE 10
 #define EMPTY 0
 #define FULL 1
 pthread_mutex_t the_mutex;

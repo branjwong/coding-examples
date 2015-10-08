@@ -9,13 +9,16 @@ This is Brandon Wong's stash of technical experience.
     - Build a Shell
     - Extended Producer-Consumer Problem
     - POSIX Threads and Producer-Consumer
-- C# 
+    - Codility Demo Problem
+- C#
     - Megaman
 - C++
     - Waiting in Line
     - Word
     - Trees
     - Hash Tables and the Dictionary ADT
+- Elm
+    - Bingo
 - Fireworks
     - Personal Logo
     - Sasaki Logo
