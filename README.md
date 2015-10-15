@@ -19,6 +19,8 @@ This is Brandon Wong's stash of technical experience.
     - Hash Tables and the Dictionary ADT
 - Elm
     - Bingo
+    - Online Resume and Portfolio Website
+        - github.com/branjwong/website
 - Fireworks
     - Personal Logo
     - Sasaki Logo

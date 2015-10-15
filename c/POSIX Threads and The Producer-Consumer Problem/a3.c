@@ -4,6 +4,7 @@
 
 #define MAX 10000000000			/* Numbers to produce */
 #define MAX_BUFFER_SIZE 10
+#define NUM_PRODUCERS
 #define EMPTY 0
 #define FULL 1
 pthread_mutex_t the_mutex;
@@ -57,13 +58,13 @@ int main (int argc, char **argc) {
 	pthread_t pro[NUM_PRODUCERS], con[NUM_CONSUMERS];
 
 	// Initialize the mutex and semaphore variables
-	pthread_mutex_init(&the_mutex, NULL);	
+	pthread_mutex_init(&the_mutex, NULL);
 	sem_init(&pro, 0, MAX_BUFFER_SIZE);
 	sem_init(&con, 0, 0);
 
-	bFront = 0;	
+	bFront = 0;
 	bCount = 0;
-	
+
 	// Create the threads
 	for (i=0; i<NUM_PRODUCERS; i++) {
 		pthread_create(&pro[i], NULL, producer, NULL);
@@ -71,13 +72,13 @@ int main (int argc, char **argc) {
 	for (i=0; i<NUM_CONSUMERS; i++) {
 		pthread_create(&con[i], NULL, consumer, NULL);
 	}
-	
+
 	// Wait for the threads to finish
-	for (i=0; i<NUM_GENERATORS; i++) {
-		pthread_join(gen[i], NULL);
+	for (i=0; i<NUM_PRODUCERS; i++) {
+		pthread_join(pro[i], NULL);
 	}
-	for (i=0; i<NUM_OPERATORS; i++) {
-		pthread_join(oper[i], NULL);
+	for (i=0; i<NUM_CONSUMERS; i++) {
+		pthread_join(con[i], NULL);
 	}
 
 	// Cleanup
