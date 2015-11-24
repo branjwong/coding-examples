@@ -1,4 +1,4 @@
-# Bingo
+# Buzzword Bingo
 
 Teacher: Pragmatic Studios  
 Finish Date: September 24th, 2015  
