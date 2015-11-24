@@ -1,6 +1,6 @@
 # Buzzword Bingo
 
-Teacher: Pragmatic Studios  
+Teacher: [Pragmatic Studios](https://pragmaticstudio.com/)  
 Finish Date: September 24th, 2015  
 Author: Brandon J Wong  
 
