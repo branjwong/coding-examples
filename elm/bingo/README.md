@@ -1,8 +1,8 @@
 # Bingo
 
-Teacher: Pragmatic Studios
-Finish Date: September 24th, 2015
-Author: Brandon J Wong
+Teacher: Pragmatic Studios  
+Finish Date: September 24th, 2015  
+Author: Brandon J Wong  
 
 ## Description
 
